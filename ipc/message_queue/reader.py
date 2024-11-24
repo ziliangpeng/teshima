@@ -9,6 +9,8 @@ logger.info("Starting IPC Message Queue Reader")
 key = 12345  # Same key as writer
 mq = sysv_ipc.MessageQueue(key)
 
+PRINT_FREQ = 1000000
+
 try:
     start_time = time.time()
     cnt = 0
@@ -19,13 +21,9 @@ try:
         message_data = message[0].decode()
         # logger.info(f"Received: {message_data}")
         cnt += 1
-        if cnt % 10000 == 0:
+        if cnt % PRINT_FREQ == 0:
             elapsed = time.time() - start_time
-            logger.info(f"Messages per second: {10000/elapsed:.2f}")
-            # in general, for simple int (convert to str) sending, ~33k/s
-            # if we send a 100b msg, it's ~19k/s
-            # 200b is ~11k/s
-            # 300b is ~8k/s
+            logger.info(f"Messages per second: {PRINT_FREQ/elapsed:.2f}")
 
             start_time = time.time()
 except KeyboardInterrupt:
