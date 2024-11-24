@@ -10,36 +10,23 @@ key = 12345  # Same key as writer
 mq = sysv_ipc.MessageQueue(key)
 
 try:
-    # Continuously receive and print messages
+    start_time = time.time()
+    cnt = 0
     while True:
         # By default, messages are received in FIFO order
         # To receive messages in non-FIFO order, we can pass MSG_NOERROR flag
-        try:
-            # Get all available messages
-            messages = []
-            while True:
-                try:
-                    msg = mq.receive(False)
-                    messages.append(msg)
-                except sysv_ipc.BusyError:
-                    break
+        message = mq.receive(True)
+        message_data = message[0].decode()
+        # logger.info(f"Received: {message_data}")
+        cnt += 1
+        if cnt % 10000 == 0:
+            elapsed = time.time() - start_time
+            logger.info(f"Messages per second: {10000/elapsed:.2f}")
+            # in general, for simple int (convert to str) sending, ~33k/s
+            # if we send a 100b msg, it's ~19k/s
+            # 200b is ~11k/s
+            # 300b is ~8k/s
 
-            # If we got any messages, find the one with highest priority
-            if messages:
-                # Sort by priority (second element), highest first
-                message = sorted(messages, key=lambda x: x[1], reverse=True)[0]
-                # Put the other messages back in the queue
-                for msg in messages[1:]:
-                    # logger.info(f"Putting back message: {msg[0].decode()}")
-                    mq.send(msg[0], msg[1])
-
-                logger.info(message)
-                message_data = message[0].decode()
-                logger.info(f"Received: {message_data}, priority: {message[1]}")
-            else:
-                raise sysv_ipc.BusyError
-        except sysv_ipc.BusyError:
-            logger.info("No message received")
-            time.sleep(30)
+            start_time = time.time()
 except KeyboardInterrupt:
     logger.info("\nReader stopped.")

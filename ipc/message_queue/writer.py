@@ -11,12 +11,9 @@ def sender(mq):
     counter = 0
     while True:
         message = str(counter)
-        priority = counter % 10 + 1
-        mq.send(message.encode(), type=priority)  # Send with priority 1
-        logger.info(f"Sent: {message}, priority: {priority}")
+        mq.send(message.encode())
+        logger.info(f"Sent: {message}")
         counter += 1
-        time.sleep(0.5 * random.random())  # Random delay between 1-3 seconds
-        # time.sleep(0.1 * random.random())  # Random delay between 0-0.1 seconds
 
 
 if __name__ == "__main__":
