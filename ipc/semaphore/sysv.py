@@ -17,7 +17,7 @@ def main():
     process_id = os.getpid()
 
     try:
-        for _ in range(42):
+        for _ in range(5):
             time.sleep(0.1)
             logger.info(f"[{process_id}] Waiting to acquire semaphore {_}...")
             sem.acquire()  # Decrement semaphore counter (wait if 0)
@@ -27,7 +27,7 @@ def main():
             current_value = sem.value
             # logger.info(f"[{process_id}] Current semaphore value: {current_value}")
 
-            time.sleep(8)  # Simulate doing some work
+            time.sleep(2)  # Simulate doing some work
 
             logger.info(f"[{process_id}] Releasing semaphore")
             sem.release()  # Increment semaphore counter
