@@ -5,6 +5,8 @@ import random
 import sysv_ipc
 import time
 
+# In general, if writer doesn't need printing, we can get ~500k/s to ~600k/s throughput.
+
 
 def sender(mq):
     # Send continuously incrementing counter
@@ -12,7 +14,6 @@ def sender(mq):
     while True:
         message = str(counter)
         mq.send(message.encode())
-        logger.info(f"Sent: {message}")
         counter += 1
 
 
